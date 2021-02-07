@@ -1,11 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Segment } from 'semantic-ui-react';
-import CreateToDO from './components/CreateItem/index.js';
+import AddItem from './components/todoList/AddItem.js';
 
 function App() {
+  const STORAGE_KEY = 'todoList';
+  const initializeItems = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  const [todoList, setTodoList] = useState(initializeItems);
+
+  const addItemHandler = (newItem) => {
+    setTodoList([...todoList, newItem]);
+  };
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(todoList));
+  }, [todoList]);
+
   return (
     <Segment>
-      <CreateToDO />
+      <AddItem addItemHandler={addItemHandler} />
     </Segment>
   );
 }

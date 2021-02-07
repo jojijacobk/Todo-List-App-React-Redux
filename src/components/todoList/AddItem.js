@@ -1,12 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { Segment, Input, Button, Grid } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 import '../../style.css';
 
-export default function CreateItem() {
-  const STORAGE_KEY = 'todoList';
-  const initializeItems = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  const [items, setItems] = useState(initializeItems);
+export default function CreateItem({ addItemHandler }) {
   const todoTextRef = useRef('');
   const STATUS = { ACTIVE: 'active', INACTIVE: 'completed' };
 
@@ -14,14 +11,8 @@ export default function CreateItem() {
     const inputText = todoTextRef.current.inputRef.current.value;
     todoTextRef.current.inputRef.current.value = '';
     const newItem = { item: inputText, status: STATUS.ACTIVE };
-    const itemsList = [...items, newItem];
-    setItems(itemsList);
+    addItemHandler(newItem);
   };
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-    console.log(localStorage.getItem(STORAGE_KEY));
-  }, [items]);
 
   return (
     <Segment raised>
