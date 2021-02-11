@@ -2,8 +2,12 @@ body {
   background: #efefef;
 }
 #root {
-  padding: 14px;
+  padding: 30px;
 }
 .small.right.margin.small {
   margin-right: 12px;
+}
+
+.ui.checkbox.completed label {
+  color: #a5673f;
 }

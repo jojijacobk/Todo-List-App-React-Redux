@@ -2,16 +2,18 @@ import React, { useRef } from 'react';
 import { Segment, Input, Button, Grid } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 
-export default function CreateItem({ addItemHandler, itemAtributes }) {
-  const { STATUS } = itemAtributes;
+export default function CreateItem({ addItemHandler }) {
   const todoTextRef = useRef('');
-
-  const newId = () => '_' + Math.random().toString(36).substr(2, 9);
+  const generateId = () => '_' + Math.random().toString(36).substr(2, 9);
 
   const addItem = () => {
     const inputText = todoTextRef.current.inputRef.current.value;
+    if (inputText.trim() === '') {
+      return;
+    }
     todoTextRef.current.inputRef.current.value = '';
-    const newItem = { text: inputText, status: STATUS.ACTIVE, id: newId() };
+    todoTextRef.current.inputRef.current.focus();
+    const newItem = { text: inputText, id: generateId() };
     addItemHandler(newItem);
   };
 
@@ -20,7 +22,16 @@ export default function CreateItem({ addItemHandler, itemAtributes }) {
       <Grid divided="vertically">
         <Grid.Row>
           <Grid.Column width={15}>
-            <Input fluid placeholder="Type your new todo here" ref={todoTextRef} />
+            <Input
+              fluid
+              placeholder="Type your new todo here"
+              ref={todoTextRef}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  addItem();
+                }
+              }}
+            />
           </Grid.Column>
           <Grid.Column width={1}>
             <Button primary className="small right margin" onClick={addItem}>

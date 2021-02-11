@@ -1,31 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import AddItem from './components/todoList/AddItem.js';
+import CreateItem from './components/todoList/CreateItem.js';
 import ListItems from './components/todoList/ListItems.js';
+import store from './redux/store.js';
+import * as actions from './redux/actions.js';
+import { writeStorage } from './localStorage.js';
 import './App.css';
 
 function App() {
-  const STORAGE_KEY = 'todoList';
-  const initializeItems = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  const initializeItems = store.getState();
   const [todoList, setTodoList] = useState(initializeItems);
-  const itemAtributes = { STATUS: { ACTIVE: 'active', INACTIVE: 'completed' } };
+  useEffect(() => {
+    writeStorage(todoList);
+  }, [todoList]);
+  const unsubscribeStore = store.subscribe(() => setTodoList(store.getState()));
 
   const addItemHandler = (newItem) => {
-    setTodoList([...todoList, newItem]);
+    store.dispatch(actions.addNewItem(newItem.text, newItem.id));
   };
-
-  const markAsDoneHandler = (itemId) => {
-    const updatedList = todoList.map((item) => (item.id === itemId ? (item.status = itemAtributes.STATUS.INACTIVE) : true) && item);
-    setTodoList(updatedList);
-  };
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(todoList));
-  }, [todoList]);
 
   return (
     <>
-      <AddItem addItemHandler={addItemHandler} itemAtributes={itemAtributes} />
-      <ListItems todoList={todoList} itemAtributes={itemAtributes} markAsDoneHandler={markAsDoneHandler} />
+      <CreateItem addItemHandler={addItemHandler} />
+      <ListItems todoList={todoList} />
     </>
   );
 }
